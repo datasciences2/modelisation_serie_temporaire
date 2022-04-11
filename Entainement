@@ -1,0 +1,309 @@
+import  numpy  as  np 
+#import  matplotlib.pyplot  as  plt 
+tab=np.random.sample(2654389)*2
+tab
+
+
+from datetime import datetime 
+datetime(year=2022, month=4, day=30) 
+
+
+from dateutil import parser  #parser.parse: paermet de separer les chaines de 
+d1 = parser.parse("30 of April, 2022, 14:00") 
+d2 = parser.parse("30/04/2022 14:15:16", dayfirst=True) 
+d1, d2
+
+t=[d1.strftime("%A"), d1.strftime("%a"), d1.strftime("%d"), d1.strftime("%B"), 
+d1.strftime("%Y")]
+t
+
+import numpy as np 
+date = np.array('2021-04-20', dtype=np.datetime64) 
+date 
+
+
+date + np.arange(7) 
+
+# un datetime basé sur le jour 
+np.datetime64('2022-04-30') 
+
+# un datetime basé sur la minute 
+a=np.datetime64('2022-04-30 14:15') 
+a
+
+
+
+# un datetime basé sur la nanoseconde en fixant l'unité fondamentale de temps 
+b=np.datetime64('2011-04-30 14:15:16', 'ns') 
+b
+
+import pandas as pd 
+date = pd.to_datetime("30 of April, 2022") 
+date
+
+date.strftime('%A')
+
+print(date.day, date.day_name()) 
+print(date.year) 
+print(date.month, date.month_name())
+
+# à noter ici l'utilisation de to_timedelta pour transformer  
+# le tableau d'entiers en tableau de durées
+date + pd.to_timedelta(np.arange(7), 'D')
+
+# ici on crée une liste d'entier entre 0 et 24 avec un intervalle de 6  
+# que l'on transforme en durée en heures avant de les ajouter à notre timestamp 
+d = pd.to_datetime("20 of April, 2022, 12:00") 
+d + pd.to_timedelta(np.arange(0,25,6), 'h')
+
+# ici on crée une liste d'entier entre 0 et 24 avec un intervalle de  6  
+# que l'on transforme en durée en heures avant de les ajouter à notre timestamp 
+d1 = pd.to_datetime("30 of April, 2021, 13:00") 
+d1 + pd.to_timedelta(np.arange(5,25,6), 'm')# debute avec 5
+
+# ici on crée une liste d'entier entre 0 et 24 avec un intervalle de 6  
+# que l'on transforme en durée en heures avant de les ajouter à notre timestamp 
+d = pd.to_datetime("30 of April, 2021, 14:00") 
+d + pd.to_timedelta(np.arange(0,25,6), 'm') #m : minute
+
+#L'indexation par le temps
+index = pd.DatetimeIndex(['2020-03-30', '2020-04-30', '2021-03-30', '2021-04-30']) 
+data = pd.Series([0, 1, 2, 3], index=index) # c'est l'indexation des valeurs du tableau
+data, data.index
+
+
+#Une  fois  qu'on  a  une Series ,  on  peut  utiliser  les  index  datetime  comme  pour  n'importe quel autre index
+data['2020-03-30':'2021-03-30']
+
+#certaines  opérations  spécifiques  aux DatetimeIndex   permettent  d'obtenir  des slicing différents
+data['2020'], data['2020-04'], data['2020-05-01':]
+
+#Les  structures de données pandas  pour les séries 
+#temporelles Nous allons maintenant introduire les structures de données fondamentales de  pandas  pour 
+#travailler avec les séries temporelles : 
+#1. pour les timestamps, il y a le type  Timestamp  : l'idée est que ça remplace le type natif de 
+#Python datetime   tout  en  étant  construit  sur  le  type numpy.datetime64   qui  est  plus efficace 
+#2. pour les time Periods, il y a le type  Period  : il permet d'encoder des durées de fréquences fixes basées sur numpy.datetime64  
+#3.  pour  les  time  deltas  ou  durations,  il  y  a  le  type Timedelta   :  c'est  un  remplaçant  plus efficace du type  natif de Python datetime.timedelta   basé sur  numpy.timedelta64  
+#Les structures d'index associées sont respectivement les DatetimeIndex , PeriodIndex  et TimedeltaIndex . On retiendra que parmi ces différents objets, les structures de date/time les plus utilisées sont les  Timestamp  et DatetimeIndex . 
+#Même si on peut très  bien appeler ces classes  d'objets directement, généralement on  passe par  la  fonction pd.to_datetime()   qui  permet  de  lire  une  grande  variété  de  formats  de chaîne de caractères. Si on passe une seule date à pd.to_datetime() , on obtient un Timestamp .  Si on lui passe une série de dates, on obtient un DatetimeIndex . 
+
+dates = pd.to_datetime([datetime(2021, 4, 30), '6th of May, 2021', '2021-Jun-7', '06-10-2021', '20210429'])
+dates
+
+
+#Tout objet DatetimeIndex  peut être converti en PeriodIndex  avec la 
+#fonction to_period()   en  ajoutant  un  code  de  fréquence  (par  exemple 'D'   pour  une 
+#fréquence  quotidienne  ou 'M'  pour une  fréquence mensuelle) 
+dates.to_period('D')
+dates.to_period('M')
+
+# un  objet  TimedeltaIndex   peut  être par exemple créé lorsqu'on soustrait 2 dates :  
+dates - dates[1]
+
+#pd.date_range()  prend une date de départ, une date de fin (qui elle est inclue !) et éventuellement  une  fréquence  (qui vaut  1 jour par défaut).  
+pd.date_range('2021-04-30', '2021-05-06')
+
+#On peut  aussi  spécifier  simplement un  point  de  départ et  un  nombre  de Periods  et  on  peut utiliser  freq  pour modifier la fréquence. 
+# pour avoir 8 timestamps chacune correspondant à un jour à partir d'aujourd'hui 
+pd.date_range('2022-04-5', periods=8)
+
+
+# pour avoir 4 timestamps chacune correspondant à un décalage de 2 heures à partir d'aujourd'hui 20h 
+pd.date_range('2021-04-5 20h', periods=4, freq='2H')
+
+pd.period_range('2022-04', periods=8, freq='M')
+
+pd.timedelta_range(0, periods=10, freq='2H')
+
+pd.timedelta_range(0, periods=9, freq="2H30T")
+
+# Par exemple, pour créer un décalage de jour ouvrable, on peut faire : 
+from pandas.tseries.offsets import BDay 
+pd.date_range('2022-04-30', periods=7, freq=BDay())
+
+# Par exemple, pour récupérer le dernier jour ouvrable du mois, on peut faire : 
+from pandas.tseries.offsets import BMonthEnd 
+pd.date_range('2022-04-30', periods=8, freq=BMonthEnd())
+
+# Visualisations  et opérations  sur les séries temporelles
+
+
+import pandas as pd 
+# parse_dates=True permet à pandas de repérer les dates sous différents formats 
+goog = pd.read_csv('C:/Users/NEM\'S/Documents/IAschool/TP_IA\Python/modelisation_serie_temp/GOOG.csv', index_col='Date', parse_dates=True) 
+goog.head(2)
+
+
+
+#Ces données recensent certaines informations sur l'action Google du 5 mars 2021 au 5 mars 
+#2022 :  les prix  à l'ouverture  et à  la  clôture, le  maximum et  le minimum  sur la  journée,  les 
+#prix ajustés et les volumes. On  étudie ici la série temporelle des prix à la clôture
+goog.tail(2)
+
+goog = goog['Close'] 
+goog.index #C'est bien une série indexée par un  DatetimeIndex  que l'on affiche
+
+import matplotlib.pyplot as plt 
+import  seaborn  as  sns  ;  sns.set()  #pour  définir  les  paramètres  d'affichage  de seaborn par défaut 
+plt.rcParams["figure.figsize"] = (12,8) 
+goog.plot()
+
+goog.plot(alpha=0.5) 
+goog.resample('BA').mean().plot() 
+goog.asfreq('BA').plot(); 
+plt.legend(['close', 'resample', 'asfreq'], loc='upper right');
+
+data = goog.iloc[-10:] 
+ 
+#visualisation 
+fig, ax = plt.subplots(2,2, sharex=True, sharey=True, figsize=(14,9)) 
+ 
+#avec asfreq 
+data.asfreq('D').plot(ax=ax[0,0], marker='o') 
+ax[0,0].set_title("asfreq()", fontsize=20); 
+ 
+data.asfreq('D', method='bfill').plot(ax=ax[1,0], style='-0') 
+data.asfreq('D', method='ffill').plot(ax=ax[1,0], style='--o') 
+ax[1,0].legend(["back-fill", "forward-fill"]); 
+ 
+#avec resample 
+data.resample('D').mean().plot(ax=ax[0,1], marker='o') 
+ax[0,1].set_title("resample()", fontsize=20); 
+ 
+data.resample('D').bfill().plot(ax=ax[1,1], style='--o') 
+data.resample('D').ffill().plot(ax=ax[1,1], style='--o') 
+ax[1,1].legend(["back-fill", "forward-fill"]);
+
+#le deplacement ou shifting
+
+fig, ax = plt.subplots(3, sharey=True) 
+ 
+goog = goog.asfreq('D', method='ffill') 
+ 
+goog.plot(ax=ax[0]) 
+goog.shift(900).plot(ax=ax[1]) 
+goog.shift(-900).plot(ax=ax[2]) 
+ 
+local_max = pd.to_datetime('2021-07-01') 
+offset1 = pd.Timedelta(900, 'D') 
+offset2 = pd.Timedelta(-900, 'D') 
+ 
+ax[0].legend(['close'], loc=2) 
+ax[0].get_xticklabels()[3].set(weight='heavy', color='red') 
+ax[0].axvline(local_max, alpha=0.3, color='red') 
+ 
+ax[1].legend(['shift(900)'], loc=2) 
+ax[1].get_xticklabels()[3].set(weight='heavy', color='red') 
+ax[1].axvline(local_max + offset1, alpha=0.3, color='red') 
+ 
+ax[2].legend(['shift(-900)'], loc=2) 
+ax[2].get_xticklabels()[3].set(weight='heavy', color='red') 
+ax[2].axvline(local_max + offset2, alpha=0.3, color='red');
+
+#calculer le retour sur investissement à 1 an de l'action de Google (ROI  - return on investment,). 
+ROI_1 = 100 * (goog.shift(-165) / goog - 1) 
+ROI_1.iloc[:-165].plot() 
+plt.ylabel('ROI'); 
+
+# fenêtres glissantes des  séries  temporelles  consiste  à  cal culer  différentes statistiques sur une fenêtre d'une longueur donnée et qui se déplace.
+#avec la methode rolling()
+
+rol = goog.rolling(165, center=True) 
+
+data = pd.DataFrame({'close': goog, 
+                     'moyenne': rol.mean(), 
+                     'std': rol.std()}) 
+ax = data.plot(style=['-', '--', ':']) 
+ax.lines[0].set_alpha(0.4)
+
+#netoyage de donnee
+velo = pd.read_csv('C:/Users/NEM\'S/Documents/IAschool/TP_IA\Python/modelisation_serie_temp/comptage-velo-donnees-compteurs.csv', sep=';', 
+                   names=["nb", "date"], header=0, 
+                   usecols=[4,5]) 
+velo.head(3) 
+
+# on voit ce "+02:00" qui définit en fait la timezone. Plusieurs solutions possibles pour gérer ce problème : 
+#1- on peut utiliser les méthodes de manipulation de timezone avec tz_convert  et tz_localize  
+#2-  on  peut  définir  notre  propre  parser  de  date  au  moment  de  l'import  en  supprimant  le "+01:00" avec un split  par exemple. 
+
+# approche1. 
+pd.DatetimeIndex(pd.to_datetime(velo.date, 
+utc=True)).tz_convert('Europe/Paris').tz_localize(None)
+
+#approche2
+
+velo = pd.read_csv('C:/Users/NEM\'S/Documents/IAschool/TP_IA\Python/modelisation_serie_temp/comptage-velo-donnees-compteurs.csv', sep=';', 
+                   names=["nb", "date"], header=0, 
+                   usecols=[4,5], 
+                   index_col="date", 
+                   parse_dates=True, 
+                   date_parser=lambda s: pd.to_datetime(s.split("+")[0]) 
+                  ) 
+# read_csv retourne un dataframe or  on veut un objet Series,  donc  puisqu'on le veut, et qu'on l'a, ben on le prend. 
+velo = velo.nb 
+velo[:3]
+
+#visualisation data
+
+velo.plot(legend=False) 
+plt.ylabel('Décompte horaire des vélos'); 
+
+# on a un probleme de valeur manquante sur les data de 2021 surtout le mois de fevrier.
+#on peut prendre les datas de 2020 ou celui celles d'une periode 
+velo = velo['2021-04':'2022-01'] 
+velo.plot(legend=False, figsize=(25,8)) 
+plt.ylabel('Décompte horaire des vélos');
+
+#Analyse de data
+fig, ax = plt.subplots(1,2,figsize=(28,7)) 
+ 
+# Somme sur une journée 
+velo_jr =  velo.resample('D').sum() 
+velo_jr.plot(ax=ax[0], legend=False) 
+ax[0].set_ylabel('Décompte journalier des vélos'); 
+ 
+# Somme sur une semaine 
+velo_sem =  velo.resample('W').sum() 
+velo_sem.plot(ax=ax[1], legend=False) 
+ax[1].set_ylabel('Décompte hebdo des vélos'); 
+
+plt.figure(figsize=(20,12)) 
+plt.plot(velo_jr.rolling(30, center=True).mean(),label="unweighted") 
+ 
+for std in [1,5,10,15,20,30]: 
+    plt.plot(velo_jr.rolling(30, center=True, win_type='gaussian').mean(std=std), 
+label=f"win{std}") 
+ 
+plt.legend(loc='best');
+
+# faisons l'analyse now avec les jours de la semaine pour +de precision
+import numpy as np 
+fig, ax = plt.subplots(1,2,figsize=(18,7)) 
+ 
+par_hr = velo.groupby(velo.index.time).mean() 
+heures = 4 * 60 * 60 * np.arange(6) 
+par_hr.plot(ax=ax[0], xticks=heures, legend=False); 
+ 
+par_sem = velo.groupby(velo.index.dayofweek).mean() 
+par_sem.index  =  ['Lundi',  'Mardi',  'Mercredi',  'Jeudi',  'Vendredi',  'Samedi', 
+'Dimanche'] 
+par_sem.plot(ax=ax[1], legend=False);
+
+ 
+jours_ouvrables = np.where(velo.index.dayofweek < 5, 'Ouvrable', 'Weekend') 
+par_hr = velo.groupby([jours_ouvrables, velo.index.time]).mean() 
+fig, ax = plt.subplots(1,2,figsize=(18,7)) 
+par_hr.loc['Ouvrable'].plot(ax=ax[0], title='Jours ouvrables', xticks=heures, 
+legend=False) 
+par_hr.loc['Weekend'].plot(ax=ax[1], title='Weekends', xticks=heures, 
+legend=False);
+
+# l'analyse du weekend
+jours_ouvrables = np.where(velo.index.dayofweek < 5, 'Ouvrable', 'Weekend') 
+par_hr = velo.groupby([jours_ouvrables, velo.index.time]).mean() 
+fig, ax = plt.subplots(1,2,figsize=(18,7)) 
+par_hr.loc['Ouvrable'].plot(ax=ax[0], title='Jours ouvrables', xticks=heures, 
+legend=False) 
+par_hr.loc['Weekend'].plot(ax=ax[1], title='Weekends', xticks=heures, 
+legend=False);
